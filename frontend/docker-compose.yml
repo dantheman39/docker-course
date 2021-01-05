@@ -1,0 +1,21 @@
+version: "3"
+services:
+  react-app:
+    build:
+      context: .
+      dockerfile: "Dockerfile.dev"
+    ports:
+      - "4001:1234"
+    volumes:
+      - "/usr/app/node_modules"  # use the one in the container
+      - ".:/usr/app"
+    stdin_open: true
+  tests:
+    build:
+      context: .
+      dockerfile: "Dockerfile.dev"
+    volumes:
+      - "/usr/app/node_modules"  # use the one in the container
+      - ".:/usr/app"
+    command: ["yarn", "test"]
+    stdin_open: true

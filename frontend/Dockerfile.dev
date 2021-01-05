@@ -1,0 +1,12 @@
+FROM node:alpine
+
+WORKDIR /usr/app
+
+COPY package.json ./
+RUN yarn
+# Note that if we use docker volumes and docker-compose, this may
+# not be strictly necessary, but good to leave it in since this
+# would be required with normal docker.
+COPY ./ ./
+
+CMD ["yarn", "start"]

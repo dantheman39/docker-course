@@ -1,0 +1,24 @@
+{
+  "name": "homework-cluster-table",
+  "version": "1.0.0",
+  "main": "index.tsx",
+  "license": "None",
+  "private": true,
+  "scripts": {
+    "start": "parcel index.html",
+    "start-strict": "tsc --noEmit && parcel index.html",
+    "build": "tsc --noEmit && NODE_ENV=production parcel build index.html",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
+    "jest": "^26.6.3",
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
