@@ -266,3 +266,9 @@ The logs from both containers appear in one terminal. His test suite offered int
 ## 88. Multi-step docker builds
 
 We don't actually need the react dependencies after we transpile our app. We only need to keep the build / dist folder. We also need nginx. We'd like to take the result of the "build" phase (from node), and then copy into the "run" phase (from nginx). See frontend/Dockerfile.
+
+# Section 7: Continuous integration and deployment with AWS
+
+We're going to use Travis CI and AWS.
+
+I created a repo docker-react and added it as a submodule to the docker-course repo
