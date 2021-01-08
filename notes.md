@@ -272,3 +272,5 @@ We don't actually need the react dependencies after we transpile our app. We onl
 We're going to use Travis CI and AWS.
 
 I created a repo docker-react and added it as a submodule to the docker-course repo
+
+I ended up not using Travis, I didn't want to grant it access to graphql's stuff. Going to follow along quickly and hope I don't miss much.
