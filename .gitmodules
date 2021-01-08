@@ -1,3 +1,3 @@
 [submodule "docker-react"]
 	path = docker-react
-	url = https://github.com/dantheman39/docker-react.git
+	url = git@github.com:dantheman39/docker-react.git
