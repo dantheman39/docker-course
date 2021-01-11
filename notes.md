@@ -274,3 +274,7 @@ We're going to use Travis CI and AWS.
 I created a repo docker-react and added it as a submodule to the docker-course repo
 
 ## 100. Creating AWS Elastic Beanstalk application
+
+# Section 8: Building a multi-container application
+
+New repo is called complex
