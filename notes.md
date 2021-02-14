@@ -277,4 +277,34 @@ I created a repo docker-react and added it as a submodule to the docker-course r
 
 # Section 8: Building a multi-container application
 
-New repo is called complex
+New repo is called docker-course-complex. We're going to build an application that has a database, uses multiple containers, and we're not going to build the docker image from within the webserver itself.
+
+## 117. Application architecture
+
+Application overview: <img src="./docker-course-complex/application-architecture.png" />
+
+How we're using postgres and redis: <img src="./docker-course-complex/fib-postgres-and-redis.png" />
+
+Flow: <img src="./docker-course-complex/flow.png" />
+
+## 138. Postgres required fixes
+
+`docker-compose down && docker-compose up --build`
+
+## 142. We're going to use nginx for our development setup.
+
+Pretty baller
+
+# Section 10: CI workflow for multiple containers
+
+# Section 11: Multi-container deployments to AWS
+
+Elastic beanstalk will rely on a Dockerrun.aws.json, which is similar to a docker-compose, but it the former has instructions on building an image, whereas the latter just runs an image.
+
+## 162. Finding docs on container definitions
+
+Turns out elastic beanstalk will run its containers on ECS, so look for ECS task definitions, then find Container Definitions
+
+## 164. More container definitions
+
+Note that at least one container should be marked as "essential".
