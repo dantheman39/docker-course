@@ -277,7 +277,7 @@ I created a repo docker-react and added it as a submodule to the docker-course r
 
 # Section 8: Building a multi-container application
 
-New repo is called docker-course-complex. We're going to build an application that has a database, uses multiple containers, and we're not going to build the docker image from within the webserver itself.
+New repo is called docker-course-complex (or docker-course-multi-container?). We're going to build an application that has a database, uses multiple containers, and we're not going to build the docker image from within the webserver itself.
 
 ## 117. Application architecture
 
@@ -308,3 +308,42 @@ Turns out elastic beanstalk will run its containers on ECS, so look for ECS task
 ## 164. More container definitions
 
 Note that at least one container should be marked as "essential".
+
+# NOTE: I've skipped part of this final section because I want to get going with K8S
+
+# Section 12. Kubernetes
+
+## 186. Why use kubernetes?
+
+What happens if we want to scale? In our app, the worker would be doing the brunt of the work.
+How would Elastic Beanstalk scale? It would scale all of our containers equally. With kubernetes
+we could do something like create a bunch of workers, but leave the number of nginx containers
+the same.
+
+A "cluster" in kubernetes, has an assembly of a "master", and one or more "nodes". Node is a VM
+or physical computer, which can run one or more containers.
+
+Outside of and in front of our cluster, there is a load balancer which will relay requests to our
+nodes.
+
+Kubernetes is appropriate when we want to have many containers run in different quantities on
+different computers.
+
+## 187. K in dev and prod
+
+In dev we use minikube. It will create a little cluster for us. In prod we use "managed solutions".
+These reference outside providers like AWS (EKS) or GCP (GKE). You could also do it yourself.
+
+minikube will create a VM (a node) that can run multiple containers. `kubectl` is the command line
+program we will use to interact with it. minikube is only used locally.
+
+Install kubectl, then a vm driver (virtualbox), and then minikube.
+
+## 184. Mapping Existing knowledge
+
+|Docker compose | Kubernetes |
+|---------------|------------|
+|Each entry can get docker-compose to build an image | K expects all images to already be built |
+|Each entry represents a _container_ we want to create | One config file per _object_ we want to create |
+|Each entry defines the networking requirements (ports) | We have to manually set up all networking |
+
