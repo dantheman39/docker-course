@@ -339,7 +339,11 @@ program we will use to interact with it. minikube is only used locally.
 
 Install kubectl, then a vm driver (virtualbox), and then minikube.
 
-## 184. Mapping Existing knowledge
+## 189. Running minikube
+
+Run `minikube start`. `minikube status` to see how it's doing.
+
+## 192. Mapping Existing knowledge
 
 |Docker compose | Kubernetes |
 |---------------|------------|
@@ -347,3 +351,34 @@ Install kubectl, then a vm driver (virtualbox), and then minikube.
 |Each entry represents a _container_ we want to create | One config file per _object_ we want to create |
 |Each entry defines the networking requirements (ports) | We have to manually set up all networking |
 
+
+## 194. Adding configuration files
+
+Steps to get running:
+- Make sure image is hosted on dockerhub
+- Make one config file to create the container
+- Make one config file to create the networking
+
+See `simplek8s/client-pod.yaml` and `simplek8s/client-node-port.yaml`.
+
+## 195. Object types and API versions
+
+We have one file per Object type. We'll pass them into kubectl. It will create something that
+will exist in our Kubernetes Cluster. Other example Object Types: StatefulSet, ReplicaController,
+Pod, Service.
+
+## 196. Running containers in pods
+
+A Pod runs a container. A Service sets up networking.
+
+When we run `minikube start`, it created a new virtual machine on your computer. That VM is
+called a Node. It will run different Objects.
+
+A basic object we use is a Pod, which is running on a Node (our VM). A Pod has a grouping of
+containers which serve a common purpose. The smallest thing we can deploy is a pod. A Pod
+has one or more containers running on it. Why put more than one container on a Pod? You only
+do so when two containers absolutely need each other to work.
+
+A good example would be a Pod that has a postrgres container, a logging container, and a
+backup-manager container. These latter two support the postgres container. The logger and
+backup manager would be useless without the postgres container.
