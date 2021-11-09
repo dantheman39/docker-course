@@ -339,7 +339,7 @@ program we will use to interact with it. minikube is only used locally.
 
 Install kubectl, then a vm driver (virtualbox), and then minikube.
 
-## 184. Mapping Existing knowledge
+## 194. Mapping Existing knowledge
 
 |Docker compose | Kubernetes |
 |---------------|------------|
@@ -347,3 +347,122 @@ Install kubectl, then a vm driver (virtualbox), and then minikube.
 |Each entry represents a _container_ we want to create | One config file per _object_ we want to create |
 |Each entry defines the networking requirements (ports) | We have to manually set up all networking |
 
+## 196. Adding a configuration file
+
+See docker-course-simple-k8s.
+
+## 197. Object types and API versions
+
+What is an object? Our config files will be used to create an object, which is a thing
+that we will put in our cluster to make it work. We create
+object types. For example, a StatefulSet, or a ReplicaController, or a Pod, or
+a Service. Note the "kind" field in our configuration files.
+
+Pods control containers, Services control networking.
+
+## 198. Running containers in pods
+
+When we ran minikube start, it created a new VM for us. That VM is known as a Node.
+The node will be used by Kubernetes to run some number of different objects.
+
+One of the most basic objects we will create is a Pod. We will give kubectl
+our config file, telling it to create a Pod inside of our Node.
+
+A Pod is a grouping of containers with a very common purpose. In kubernetes, you
+can't just run a naked container, you run it within a Pod, which is the smallest
+thing that we can deploy.
+
+A Pod contains containers that have a very common purpose: containers that
+need to be deployed together for our application to work. A good example of running
+a pod with multiple containers, is a pod that has three containers, a postgres container
+(primary), and a logger container and a backup manager container (support containers).
+We need all of these for our database to work correctly. If our postgres container
+goes away, the backup-manager won't work, and the logger container can't write logs
+without the postgres container.
+
+## 199. Service config files in depth
+
+See client-node-port.yaml. This sets up networking in a Kubernetes cluster.
+
+Services have 4 sub-types: You can create a Service of type ClusterIP, NodePort,
+LoadBalancer or Ingress. We're creating a NodePort Service. It exposes a container
+to the outside world. A NodePort is only good for development purposes, we almost
+never use it in production.
+
+Our web browser will connect to a K8S Node VM running on our machine, created by
+minikube. In the Node, we go through the kube-proxy, then the NodePort Service, which
+points to the Pod: within the pod we're sent to port 3000, which gives us access to
+our multi-client container.
+
+Note that we specified three ports in our file. How does it link back to our Pod?
+Note the "selector.component: web". It uses the "Label selector system". Note that
+"component: web" is totally arbitrary. We could have called it "tier: frontend".
+
+Why three ports? "port" is what another container in a different pod within our cluster
+would use to connect to the multi-client pod. In our case we're not going to use it.
+The targetPort is the port on the pod that we're going to route to. The nodePort is
+the port we'll put in our browser when we want to get to the damn thing.
+
+nodePort is a number between 30000-32767. If we don't specify it, it will be created
+randomly for us within that range.
+
+## 200. Connecting to running containers
+
+Make sure minkube has started our VM.
+
+`kubectl apply -f <configfilename>`
+
+We're going to run this twice, once for each file.
+
+Let's see if they were successfully created. We'd run `kubectl get <type_of_object>`.
+
+`kubectl get pods`, `kubectl get services`.
+
+How to access it in the browser? We need to get the IP address of the VM created
+by minikube. `minikube ip`
+
+## 201. The entire deployment flow
+
+We don't work directly with the nodes, we work with the master. We apply configuration files, and then the master will tell our nodes to start up some containers. Each node has a copy of docker on it, and it will go fetch the container it is told to. The master periodically checks that our nodes are up and running the containers that the master told them to.
+
+## 202. Imperative vs. Declarative deployments
+
+# Section 13: Maintaining sets of containers with deployments
+
+## 203. Updating existing objects
+
+Let's update our existing pod to use the "multi-worker" image we created, instead of the "multi-client" one that it's currently using. We're going to update our config file and apply it.
+
+How does k8s know to update an object and not create a new one? It looks at name and kind.
+
+## 204. Declarative updates in action
+
+Note that it's going to crash without redis. We don't care right now.
+
+How can we get the status of the single pod after running `kubectl apply -f client-pod.yaml`?
+
+`kubectl describe <object_type> <object_name>`
+`kubectl describe pods client-pod`
+
+## 205. Limitations in config updates
+
+We're going to change the containerPort and try to update. However we're going to get an error. We're only allowed to change a small set of things on a pod.
+
+## 206. Running containers with deployments
+
+To be able to make any changes we want to pods, we're going to learn to use a new type of object. We're going to use a Deployment. A Deployment is an object that maintains a set of pods, ensuring they have the correct config and that they are in the desired state.
+
+How is it different from a pod? Both can run containers.
+
+| Pod | Deployment |
+--------------------
+| Runs single set of containers. | Runs a set of identical pods |
+| Good for one-off dev purposes | Monitors the state of each pod, updating as necessary|
+| Rarely used in production | Good for dev |
+| | Good for prod |
+
+A Deployment has a pod template attached to it.
+
+## 207. Note
+
+Use stephen's image instead of ours to avoid some error: stephengrider/multi-client
