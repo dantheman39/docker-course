@@ -5,8 +5,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - ports: 3050
+    - port: 3050
       targetPort: 3000
+      # This is what's exposed
       nodePort: 31515
   selector:
     component: web

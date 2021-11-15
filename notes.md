@@ -476,3 +476,126 @@ A Deployment has a pod template attached to it.
 
 Use stephen's image instead of ours to avoid some error: stephengrider/multi-client
 
+## 200. Deployment configuration files
+
+See simplek8s/client-deployment.yaml
+
+## 201. Walking through the config
+
+The `template` section is the configuration that is going to be used
+by every single pod in this deployment.
+
+Replicas specifies the number of pods this deployment is supposed to make.
+
+The `selector` is what can be used for kubectl to be able to request information
+from the master about that pod. `selector.matchLabels` corresponds to
+`template.metadata.labels`.
+
+## 202. Applying a deployment
+
+First, delete any previously running pods:
+
+`kubectl delete -f <config_file>`. Note that this is an imperative command
+sent to our cluster, we can't really get around that.
+
+## 203. Why use services?
+
+We try to connect to our deployment. Run `minikube ip` to find the IP of
+the VM.
+
+![Minikube networking](./simplek8s/resources/minikube-arch.png)
+
+(Note that he's expecting the client-node-port service to have been applied).
+
+Run `kubectl get pods -o wide` for a little more info. Note that this pod
+has an IP assigned to it. The IP address is internal to our VM, and its address
+can be different if it has to restart, etc.
+
+Note that using minikube with the docker driver borks using NodePort.
+See [issue](https://github.com/kubernetes/minikube/issues/11193).
+This is the flow one would expect to use:
+
+```
+minikube ip
+> 192.1.1.25
+kubectl describe service client-node-port
+# Look for NodePort
+
+# In browser
+# 192.1.1.25:31515 <- client-node-port.nodePort
+# Success! But not.
+
+# The fix is to either switch to using VMs, or do:
+minikube service --url client-node-port
+# It will start a tunnel for you
+```
+
+## 204. Scaling and Changing Deployments
+
+We're going to try changing the containerPort in the deployment.
+
+Apply it. Note that the output message says "configured" and not "created."
+Also not that `kubectl get pods` shows that the pod was deleted and recreated
+(only been alive for a few seconds). Describe the pod to confirm that it's
+using the new port.
+
+Let's scale up to 5 (change replicas). If you can run `get deployments` fast
+enough, you may note that you can have more than 5 pods running while it
+brings up the new ones and spins down the old ones.
+
+## 205. Updating deployment images
+
+What happens when you have a new version of an image? How do you make
+the deployment use the new image? (not answered here, see following sections).
+
+## 206. Rebuilding the Client image
+
+## 207. Triggering deployment updates
+
+Note that it's surprisingly hard to get a deployment to use the latest version
+of an image. See [this issue](https://github.com/kubernetes/kubernetes/issues/33664).
+We're using the "latest" image, but applying an unchanged file causes nothing to happen.
+
+He suggests three solutions.
+
+1. Manually delete pods.
+ 
+This is not great at all.
+
+2. Use image tag.
+ 
+Requires code change.
+
+3. Use an imperative command to update the config.
+
+This makes the config file go out of date with our config file.
+
+He prefers 3.
+
+## 208. Imperatively Updating a Deployment's Image
+
+Tag the image with a version number, then run kubectl to change the deployment
+to use the new image:
+
+`kubectl set image deployment/client-deployment client=stephengrider/multi-client:v5`
+
+## 210. Multiple docker installations
+
+He has a bunch of things running in `docker ps`.
+
+![kubectl communicating with VM](./simplek8s/resources/kubectl-communicating-with-vm.png)
+
+Note that if you're running minikube, you have two copies of docker. One
+that you're using for docker commands, and one inside the VM created by minikube.
+
+## 211. Reconfiguring docker cli
+
+Optional of course. Run `eval $(minikube docker-env)`. This only applies only
+for the current bash session.
+
+## 212. Why mess with docker in the node?
+
+- You can use debugging techniques to inspect containers, get logs from them.
+  (Although this is practically all available via kubectl)
+- Manually kill containers to test kubernetes's "self-healing".
+- Delete cached images in node. `docker system prune -a`
