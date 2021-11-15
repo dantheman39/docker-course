@@ -313,7 +313,7 @@ Note that at least one container should be marked as "essential".
 
 # Section 12. Kubernetes
 
-## 186. Why use kubernetes?
+## 178. Why use kubernetes?
 
 What happens if we want to scale? In our app, the worker would be doing the brunt of the work.
 How would Elastic Beanstalk scale? It would scale all of our containers equally. With kubernetes
@@ -329,7 +329,7 @@ nodes.
 Kubernetes is appropriate when we want to have many containers run in different quantities on
 different computers.
 
-## 187. K in dev and prod
+## 179. K in dev and prod
 
 In dev we use minikube. It will create a little cluster for us. In prod we use "managed solutions".
 These reference outside providers like AWS (EKS) or GCP (GKE). You could also do it yourself.
@@ -339,11 +339,11 @@ program we will use to interact with it. minikube is only used locally.
 
 Install kubectl, then a vm driver (virtualbox), and then minikube.
 
-## 189. Running minikube
+## 181. Running minikube
 
 Run `minikube start`. `minikube status` to see how it's doing.
 
-## 192. Mapping Existing knowledge
+## 186. Mapping Existing knowledge
 
 |Docker compose | Kubernetes |
 |---------------|------------|
@@ -351,7 +351,7 @@ Run `minikube start`. `minikube status` to see how it's doing.
 |Each entry represents a _container_ we want to create | One config file per _object_ we want to create |
 |Each entry defines the networking requirements (ports) | We have to manually set up all networking |
 
-## 194. Adding configuration files
+## 188. Adding configuration files
 
 Steps to get running:
 - Make sure image is hosted on dockerhub
@@ -360,29 +360,7 @@ Steps to get running:
 
 See `simplek8s/client-pod.yaml` and `simplek8s/client-node-port.yaml`.
 
-## 195. Object types and API versions
-
-We have one file per Object type. We'll pass them into kubectl. It will create something that
-will exist in our Kubernetes Cluster. Other example Object Types: StatefulSet, ReplicaController,
-Pod, Service.
-
-## 196. Running containers in pods
-
-A Pod runs a container. A Service sets up networking.
-
-When we run `minikube start`, it created a new virtual machine on your computer. That VM is
-called a Node. It will run different Objects.
-
-A basic object we use is a Pod, which is running on a Node (our VM). A Pod has a grouping of
-containers which serve a common purpose. The smallest thing we can deploy is a pod. A Pod
-has one or more containers running on it. Why put more than one container on a Pod? You only
-do so when two containers absolutely need each other to work.
-
-A good example would be a Pod that has a postrgres container, a logging container, and a
-backup-manager container. These latter two support the postgres container. The logger and
-backup manager would be useless without the postgres container.
-
-## 197. Object types and API versions
+## 189. Object types and API versions
 
 What is an object? Our config files will be used to create an object, which is a thing
 that we will put in our cluster to make it work. We create
@@ -391,7 +369,7 @@ a Service. Note the "kind" field in our configuration files.
 
 Pods control containers, Services control networking.
 
-## 198. Running containers in pods
+## 190. Running containers in pods
 
 When we ran minikube start, it created a new VM for us. That VM is known as a Node.
 The node will be used by Kubernetes to run some number of different objects.
@@ -411,7 +389,7 @@ We need all of these for our database to work correctly. If our postgres contain
 goes away, the backup-manager won't work, and the logger container can't write logs
 without the postgres container.
 
-## 199. Service config files in depth
+## 191. Service config files in depth
 
 See client-node-port.yaml. This sets up networking in a Kubernetes cluster.
 
@@ -437,7 +415,7 @@ the port we'll put in our browser when we want to get to the damn thing.
 nodePort is a number between 30000-32767. If we don't specify it, it will be created
 randomly for us within that range.
 
-## 200. Connecting to running containers
+## 192. Connecting to running containers
 
 Make sure minkube has started our VM.
 
@@ -452,21 +430,21 @@ Let's see if they were successfully created. We'd run `kubectl get <type_of_obje
 How to access it in the browser? We need to get the IP address of the VM created
 by minikube. `minikube ip`
 
-## 201. The entire deployment flow
+## 193. The entire deployment flow
 
 We don't work directly with the nodes, we work with the master. We apply configuration files, and then the master will tell our nodes to start up some containers. Each node has a copy of docker on it, and it will go fetch the container it is told to. The master periodically checks that our nodes are up and running the containers that the master told them to.
 
-## 202. Imperative vs. Declarative deployments
+## 194. Imperative vs. Declarative deployments
 
 # Section 13: Maintaining sets of containers with deployments
 
-## 203. Updating existing objects
+## 195. Updating existing objects
 
 Let's update our existing pod to use the "multi-worker" image we created, instead of the "multi-client" one that it's currently using. We're going to update our config file and apply it.
 
 How does k8s know to update an object and not create a new one? It looks at name and kind.
 
-## 204. Declarative updates in action
+## 196. Declarative updates in action
 
 Note that it's going to crash without redis. We don't care right now.
 
@@ -475,18 +453,18 @@ How can we get the status of the single pod after running `kubectl apply -f clie
 `kubectl describe <object_type> <object_name>`
 `kubectl describe pods client-pod`
 
-## 205. Limitations in config updates
+## 197. Limitations in config updates
 
 We're going to change the containerPort and try to update. However we're going to get an error. We're only allowed to change a small set of things on a pod.
 
-## 206. Running containers with deployments
+## 198. Running containers with deployments
 
 To be able to make any changes we want to pods, we're going to learn to use a new type of object. We're going to use a Deployment. A Deployment is an object that maintains a set of pods, ensuring they have the correct config and that they are in the desired state.
 
 How is it different from a pod? Both can run containers.
 
 | Pod | Deployment |
---------------------
+|-----|------------|
 | Runs single set of containers. | Runs a set of identical pods |
 | Good for one-off dev purposes | Monitors the state of each pod, updating as necessary|
 | Rarely used in production | Good for dev |
@@ -494,6 +472,7 @@ How is it different from a pod? Both can run containers.
 
 A Deployment has a pod template attached to it.
 
-## 207. Note
+## 199. Note
 
 Use stephen's image instead of ours to avoid some error: stephengrider/multi-client
+
