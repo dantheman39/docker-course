@@ -825,3 +825,13 @@ The video's a little out of date. Use this: https://kubernetes.github.io/ingress
 ## 254. Creating Ingress
 
 See ingress-service.yaml.
+
+# 16. Kubernetes Production Deployment
+
+He suggests deploying on GCP, I already know the reasons.
+
+He shows us using travis. Travis is now 69 bucks a month!!
+
+I'm going to make a repo in gitlab, and learn about what we use at work.
+
+Copying the repo to a new folder: docker-course-k8s
